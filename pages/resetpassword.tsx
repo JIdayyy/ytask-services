@@ -13,6 +13,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 import { useMutation } from "react-query";
 import { useRouter } from "next/router";
+import ErrorAnimation from "@components/lotties/Error/ErrorLottie";
 
 const ResetPassword: React.FC = () => {
     const router = useRouter();
@@ -75,6 +76,8 @@ const ResetPassword: React.FC = () => {
         }
     };
 
+    if (!token) return <ErrorAnimation />;
+
     return (
         <Center position="relative" minH="100vh" flexDirection="column">
             <Text fontSize={40}>Y TASK</Text>
@@ -100,7 +103,9 @@ const ResetPassword: React.FC = () => {
                     <Input type="password" {...register("confirm_password")} />
                     <ReCAPTCHA
                         onErrored={() => console.log("error")}
-                        sitekey="6Le5bh8gAAAAAIOuUgcCNXiY_1-yzk5hiyBjaQ8i"
+                        sitekey={
+                            process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY as string
+                        }
                         onChange={onChange}
                     />
                     <Button
