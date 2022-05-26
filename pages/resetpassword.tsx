@@ -44,7 +44,7 @@ const ResetPassword: React.FC = () => {
             onError: (error) => {
                 toast({
                     title: "Error",
-                    description: error.message,
+                    description: "Internal server error",
                     status: "error",
                 });
                 console.log(error);
