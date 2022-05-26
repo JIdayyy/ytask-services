@@ -7,6 +7,7 @@ import {
     VStack,
     FormLabel,
     Text,
+    useToast,
 } from "@chakra-ui/react";
 import { FieldValues, useForm } from "react-hook-form";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -22,6 +23,7 @@ const ResetPassword: React.FC = () => {
     const [success, setSucces] = useState<boolean>(false);
     const [count, setCount] = useState<number>(10);
     const [captchaSuccess, setCaptchaSuccess] = useState<boolean>(false);
+    const toast = useToast();
 
     const { mutate, isLoading } = useMutation(
         (data: FieldValues) =>
@@ -40,6 +42,11 @@ const ResetPassword: React.FC = () => {
                 setSucces(true);
             },
             onError: (error) => {
+                toast({
+                    title: "Error",
+                    description: error.message,
+                    status: "error",
+                });
                 console.log(error);
             },
         },
