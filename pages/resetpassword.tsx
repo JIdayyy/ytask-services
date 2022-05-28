@@ -15,15 +15,39 @@ import axios from "axios";
 import { useMutation } from "react-query";
 import { useRouter } from "next/router";
 import ErrorAnimation from "@components/lotties/Error/ErrorLottie";
+import resetPassword from "src/resolvers/resetPassword";
+import { yupResolver } from "@hookform/resolvers/yup";
+import InputWithError from "src/forms/InputWithError";
 
 const ResetPassword: React.FC = () => {
     const router = useRouter();
     const { token, callback } = router.query;
-    const { handleSubmit, register } = useForm();
+    const {
+        handleSubmit,
+        register,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(resetPassword),
+        criteriaMode: "all",
+    });
     const [success, setSucces] = useState<boolean>(false);
     const [count, setCount] = useState<number>(10);
     const [captchaSuccess, setCaptchaSuccess] = useState<boolean>(false);
     const toast = useToast();
+
+    const { mutate: verifyToken } = useMutation(
+        (token: string) =>
+            axios.post("https://www.google.com/recaptcha/api/siteverify", {
+                secret: process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY,
+                response: token,
+            }),
+        {
+            onSuccess: (data) => {
+                console.log(data);
+                setSucces(true);
+            },
+        },
+    );
 
     const { mutate, isLoading } = useMutation(
         (data: FieldValues) =>
@@ -39,7 +63,6 @@ const ResetPassword: React.FC = () => {
         {
             onSuccess(data) {
                 console.log(data);
-                setSucces(true);
             },
             onError: (error) => {
                 toast({
@@ -54,7 +77,7 @@ const ResetPassword: React.FC = () => {
 
     const onSubmit = (data: FieldValues) => {
         console.log(data);
-        if (data.password !== data.confirm_password) {
+        if (data.password !== data.confirmPassword) {
             return;
         }
         mutate({ ...data, token });
@@ -79,6 +102,8 @@ const ResetPassword: React.FC = () => {
 
     const onChange = (token: string | null) => {
         if (token) {
+            verifyToken(token);
+
             setCaptchaSuccess(true);
         }
     };
@@ -105,9 +130,21 @@ const ResetPassword: React.FC = () => {
                         previous one.
                     </Text>
                     <FormLabel>Password</FormLabel>
-                    <Input type="password" {...register("password")} />
+                    <InputWithError
+                        isEditable
+                        errors={errors}
+                        type="password"
+                        register={register}
+                        name="password"
+                    />
                     <FormLabel>Confirm password</FormLabel>
-                    <Input type="password" {...register("confirm_password")} />
+                    <InputWithError
+                        isEditable
+                        errors={errors}
+                        type="password"
+                        register={register}
+                        name="confirmPassword"
+                    />
                     <ReCAPTCHA
                         onErrored={() => console.log("error")}
                         sitekey={
