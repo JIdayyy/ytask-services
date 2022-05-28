@@ -43,7 +43,6 @@ const ResetPassword: React.FC = () => {
         {
             onSuccess: (data) => {
                 console.log(data);
-                setSucces(true);
             },
         },
     );
@@ -62,6 +61,7 @@ const ResetPassword: React.FC = () => {
         {
             onSuccess(data) {
                 console.log(data);
+                setSucces(true);
             },
             onError: (error) => {
                 toast({
