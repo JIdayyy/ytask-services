@@ -37,9 +37,8 @@ const ResetPassword: React.FC = () => {
 
     const { mutate: verifyToken } = useMutation(
         (token: string) =>
-            axios.post("https://www.google.com/recaptcha/api/siteverify", {
-                secret: process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY,
-                response: token,
+            axios.post(`${process.env.NEXT_PUBLIC_SERVICE_URL}/verifycaptcha`, {
+                token,
             }),
         {
             onSuccess: (data) => {
