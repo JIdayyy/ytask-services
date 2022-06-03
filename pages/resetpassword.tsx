@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
     Center,
-    Input,
     Button,
     Link,
     VStack,
@@ -79,7 +78,7 @@ const ResetPassword: React.FC = () => {
         if (data.password !== data.confirmPassword) {
             return;
         }
-        mutate({ ...data, token });
+        mutate({ password: data.password, token });
     };
 
     useEffect(() => {
